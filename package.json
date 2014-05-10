@@ -1,0 +1,43 @@
+{
+  "name": "qclass",
+  "version": "0.1",
+
+  "description": "Quick and simple JavaScript class library.",
+  "keywords": [
+    "class",
+    "derive",
+    "inherit",
+    "inheritance",
+    "object",
+    "prototype",
+    "property"
+  ],
+
+  "homepage": "https://github.com/kobalicek/qclass",
+  "bugs": {
+    "url": "https://github.com/kobalicek/qclass/issues"
+  },
+
+  "contributors": [{
+    "name": "Petr Kobalicek",
+    "email": "kobalicek.petr@gmail.com",
+    "url": "http://kobalicek.com"
+  }],
+
+  "license": "Unlicense",
+
+  "main": "qclass.js",
+
+  "engines": {
+    "node": "*"
+  },
+
+  "devDependencies": {
+    "mocha": "*"
+  },
+
+  "repository" : {
+    "type": "git",
+    "url": "https://github.com/kobalicek/qclass.git"
+  }
+}
