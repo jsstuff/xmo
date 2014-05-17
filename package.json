@@ -39,5 +39,9 @@
   "repository" : {
     "type": "git",
     "url": "https://github.com/kobalicek/qclass.git"
+  },
+
+  "scripts": {
+    "test": "mocha qclass-spec.js"
   }
 }
