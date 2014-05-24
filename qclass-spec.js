@@ -4,7 +4,7 @@ var qclass = require("./qclass");
 describe("QClass", function() {
   it("should create new Class without `construct` specified.", function() {
     var Class = qclass({});
-    
+
     var obj = new Class();
     assert(obj instanceof Object);
     assert(obj instanceof Class);
@@ -16,7 +16,7 @@ describe("QClass", function() {
         this.property = property;
       }
     });
-    
+
     var obj = new Class(1);
 
     assert(obj instanceof Object);
@@ -35,7 +35,7 @@ describe("QClass", function() {
         return this.a + this.b;
       }
     });
-    
+
     var obj = new Class(1, 2);
 
     assert(obj.a === 1);
@@ -98,7 +98,7 @@ describe("QClass", function() {
 
     var ClassB = qclass({
       extend: ClassA,
-      
+
       construct: function(x, y) {
         ClassA.call(this, x);
         this.y = y;
@@ -127,7 +127,7 @@ describe("QClass", function() {
     assert(b.getType() === "ClassB");
   });
 
-  it("should provide extensions.", function() {
+  it("should provide `extensions`.", function() {
     var $properties;
     var $definition;
 
@@ -161,8 +161,8 @@ describe("QClass", function() {
       },
 
       properties: {
-        "x": true,
-        "y": true
+        x: true,
+        y: true
       }
     });
 
@@ -175,7 +175,7 @@ describe("QClass", function() {
       },
 
       properties: {
-        "radius": true
+        radius: true
       }
     });
 
@@ -190,7 +190,7 @@ describe("QClass", function() {
 
     assert(point.getX() === 10);
     assert(point.getY() === 20);
-    
+
     assert(circle.x === 1);
     assert(circle.y === 2);
     assert(circle.radius === 3);
@@ -202,5 +202,41 @@ describe("QClass", function() {
     assert(circle.getX() === 10);
     assert(circle.getY() === 20);
     assert(circle.getRadius() === 30);
+  });
+
+  it("should provide `middleware`.", function() {
+    var $definition;
+
+    var Point = qclass($definition = {
+      construct: function(x, y) {
+        this.x = x;
+        this.y = y;
+      },
+
+      middleware: function(def) {
+        assert(def === $definition);
+        this.PointMiddleware = true;
+      }
+    });
+
+    var Circle = qclass($definition = {
+      extend: Point,
+
+      construct: function(x, y, radius) {
+        Point.call(this, x, y);
+        this.radius = radius;
+      },
+
+      middleware: function(def) {
+        assert(def === $definition);
+        this.CircleMiddleware = true;
+      }
+    });
+
+    assert(Point.PointMiddleware === true);
+    assert(!Point.hasOwnProperty("CircleMiddleware"));
+
+    assert(Circle.PointMiddleware === true);
+    assert(Circle.CircleMiddleware === true);
   });
 });
