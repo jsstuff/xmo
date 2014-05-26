@@ -1,11 +1,13 @@
 {
   "name": "qclass",
-  "version": "0.0.1",
+  "version": "0.1.0",
 
   "description": "Quick and simple JavaScript class library.",
   "keywords": [
     "class",
     "derive",
+    "mixin",
+    "mixins",
     "inherit",
     "inheritance",
     "object",
@@ -27,10 +29,6 @@
   "license": "Unlicense",
 
   "main": "qclass.js",
-
-  "engines": {
-    "node": "*"
-  },
 
   "devDependencies": {
     "mocha": "*"
