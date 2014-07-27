@@ -1,3 +1,6 @@
+// QClass <https://github.com/kobalicek/qclass>
+"use strict"
+
 var assert = require("assert");
 var qclass = require("./qclass");
 

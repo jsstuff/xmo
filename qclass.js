@@ -1,5 +1,4 @@
 // QClass <https://github.com/kobalicek/qclass>
-// Quick and simple JavaScript class library (Unlicense).
 (function($export, $as) {
 "use strict";
 

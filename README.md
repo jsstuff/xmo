@@ -3,10 +3,8 @@ QClass
 
 Lightweight, but powerful JavaScript inheritance and mixins.
 
-Official Repository
--------------------
-
-https://github.com/kobalicek/qclass
+  * [Official Repository (kobalicek/qclass)](https://github.com/kobalicek/qclass)
+  * [Unlicense] (http://unlicense.org)
 
 Introduction
 ------------
@@ -264,8 +262,3 @@ Mixins
 ------
 
 TODO:
-
-License
--------
-
-QClass follows `Unlicense`.
