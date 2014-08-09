@@ -3,7 +3,7 @@ QClass
 
 Lightweight, but powerful JavaScript inheritance and mixins.
 
-  * [Official Repository (kobalicek/qclass)](https://github.com/kobalicek/qclass)
+  * [Official Repository (jshq/qclass)](https://github.com/jshq/qclass)
   * [Unlicense] (http://unlicense.org)
 
 Introduction
@@ -243,7 +243,8 @@ var Point = qclass({
   }
 });
 
-// Create an instance of `Point` and try.
+// Create an instance of `Point` and use functions created by the
+// `property` extension.
 var point = new Point(1, 2);
 
 console.log(point.getX()); // Outputs `1`.
@@ -256,9 +257,90 @@ console.log(point.getX()); // Outputs `10`.
 console.log(point.getY()); // Outputs `20`.
 ```
 
-Hooks are very similar to extensions, however they don't need any key in definitions and are always called. Hooks are in general more powerful, because they can use any property or multiple properties to do the job. For example in [QSql](https://github.com/kobalicek/qsql) library hooks are used to alias all "UPPER_CASED" functions which mimic SQL keyword to "camelCased" alternatives.
+Hooks are very similar to extensions, however they don't need any key in definitions and are always called. Hooks are in general more powerful, because they can use any property or multiple properties to do the job. For example in [QSql](https://github.com/jshq/qsql) library hooks are used to alias all "UPPER_CASED" functions which mimic SQL keywords to "camelCased" alternatives.
 
 Mixins
 ------
 
-TODO:
+A mixin is set of functions that can be included in another class or mixin. Mixins are defined by using `qclass.mixin(def)`, where `def` is similar definition compatible to `qclass` itself, but without `$construct` support (mixins can't be instantiated). Mixins also understand `$extensions` and `$hooks`, so it's possible to define these in the mixin and just include in other classes.
+
+```JS
+// Create a mixin that provides `translate(x, y)` function.
+var MTranslate = qclass.mixin({
+  translate: function(x, y) {
+    this.x += x;
+    this.y += y;
+    return this;
+  }
+});
+
+// Create a Point class that includes MTranslate mixin.
+var Point = qclass({
+  $mixins: [MTranslate],
+
+  $construct: function(x, y) {
+    this.x = x;
+    this.y = y;
+  },
+
+  toString: function() {
+    return "[" + this.x + " " + this.y + "]";
+  }
+});
+
+// Create a Rect class that includes MTranslate mixin.
+var Rect = qclass({
+  $mixins: [MTranslate],
+
+  $construct: function(x, y, w, h) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+  },
+
+  toString: function() {
+    return "[" + this.x + " " + this.y + " " + this.w + " " + this.h + "]";
+  }
+});
+
+// The translate() functions are provided to both classes.
+var p = new Point(0, 0);
+var r = new Rect(0, 0, 33, 67);
+
+p.translate(1, 2);
+r.translate(1, 2);
+
+console.log(p.toString()); // Outputs `[1, 2]`.
+console.log(r.toString()); // Outputs `[1, 2, 33, 67]`.
+```
+
+Combining more mixins to a single mixin:
+
+```JS
+// Create two mixins MTranslate and MScale.
+var MTranslate = qclass.mixin({
+  translate: function(x, y) {
+    this.x += x;
+    this.y += y;
+    return this;
+  }
+});
+
+var MScale = qclass.mixin({
+  scale: function(x, y) {
+    if (y == null)
+      y = x;
+
+    this.x *= x;
+    this.y *= y;
+    return this;
+  }
+});
+
+// If a combined mixin is needed, it can be created simply by
+// including MTranslate and MScale into another mixin.
+var MCombined = qclass.mixin({
+  $mixins: [MTranslate, MScale]
+});
+```

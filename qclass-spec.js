@@ -1,4 +1,4 @@
-// QClass <https://github.com/kobalicek/qclass>
+// QClass <https://github.com/jshq/qclass>
 "use strict"
 
 var assert = require("assert");

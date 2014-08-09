@@ -1,6 +1,6 @@
 {
   "name": "qclass",
-  "version": "0.1.0",
+  "version": "0.1.2",
 
   "description": "Quick and simple JavaScript class library.",
   "keywords": [
@@ -15,9 +15,9 @@
     "property"
   ],
 
-  "homepage": "https://github.com/kobalicek/qclass",
+  "homepage": "https://github.com/jshq/qclass",
   "bugs": {
-    "url": "https://github.com/kobalicek/qclass/issues"
+    "url": "https://github.com/jshq/qclass/issues"
   },
 
   "contributors": [{
@@ -36,7 +36,7 @@
 
   "repository" : {
     "type": "git",
-    "url": "https://github.com/kobalicek/qclass.git"
+    "url": "https://github.com/jshq/qclass.git"
   },
 
   "scripts": {
