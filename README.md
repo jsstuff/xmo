@@ -199,9 +199,9 @@ console.log(point.getY()); // Outputs `20`.
 Hooks
 -----
 
-Extensions define a function that is called if a given `key` is present in class definition. Since this concept is fine and generally useful, sometimes it's handy to be able to call a function per class definition that does no rely on a particular key - this is called hooks in `qclass` and defined by `$hooks` property, which can contain a single function (Hook) or an array of functions. Hooks, like extensions, are inherited with the class, so if a hook is defined it's called for all classes that directly or indirectly inherit from the class where the Hook has been defined.
+Extensions define a function that is called if a given `key` is present in class definition. Since this concept is fine and generally useful, sometimes it's handy to be able to call a function per class definition that doesn't rely on a particular key - this is called hooks in `qclass` and defined by `$hooks` property, which can contain a single function (Hook) or an array of functions. Hooks, like extensions, are inherited with the class, so if a hook is defined it's called for all classes that directly or indirectly inherit from the class where the Hook has been defined.
 
-The following example illustrates does the same thing as `$properties` extension, but by using a hook:
+The following example does the same thing as `$properties` extension, but by using `$hooks`:
 
 ```JS
 var Point = qclass({
@@ -210,30 +210,27 @@ var Point = qclass({
     this.y = y;
   },
 
-  // Defines extensions.
-  $extensions: {
-    // Define a hook.
-    //
-    // `this` - Class object (`Point` in our case).
-    // `def`  - The whole `def` object passed to `qclass(def)`.
-    $hooks: function(def) {
-      if (!def.$properties)
-        return;
+  // Define a hook.
+  //
+  // `this` - Class object (`Point` in our case).
+  // `def`  - The whole `def` object passed to `qclass(def)`.
+  $hooks: function(def) {
+    if (!def.$properties)
+      return;
 
-      // Iterate over all keys in `$properties`.
-      Object.keys(def.$properties).forEach(function(key) {
-        var upperKey = key.charAt(0).toUpperCase() + key.substr(1);
+    // Iterate over all keys in `$properties`.
+    Object.keys(def.$properties).forEach(function(key) {
+      var upperKey = key.charAt(0).toUpperCase() + key.substr(1);
 
-        // Create getter and setter for a given `key`.
-        this.prototype["get" + upperKey] = function() {
-          return this[key];
-        };
+      // Create getter and setter for a given `key`.
+      this.prototype["get" + upperKey] = function() {
+        return this[key];
+      };
 
-        this.prototype["set" + upperKey] = function(value) {
-          this[key] = value;
-        };
-      }, this /* binds `this` to the callback. */);
-    }
+      this.prototype["set" + upperKey] = function(value) {
+        this[key] = value;
+      };
+    }, this /* binds `this` to the callback. */);
   },
 
   // Will be used by the hook defined above.
