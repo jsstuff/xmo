@@ -4,7 +4,7 @@
 
 // \internal
 // \{
-var Object_hasOwnProperty = Object.prototype.hasOwnProperty;
+var hasOwn = Object.prototype.hasOwnProperty;
 // \}
 
 // A helper that is used to create a new `qPrototype` without actually creating
@@ -22,7 +22,7 @@ function qcConstruct(Super) {
 // Returns `true` if a given object has no own properties.
 function qcIsEmpty(obj) {
   for (var k in obj)
-    if (Object_hasOwnProperty.call(obj, k))
+    if (hasOwn.call(obj, k))
       return false;
   return true;
 }
@@ -33,7 +33,7 @@ function qcMerge(dst /*, ... */) {
   for (var i = 1, len = arguments.length; i < len; i++) {
     var src = arguments[i];
     for (var k in src) {
-      if (Object_hasOwnProperty.call(src, k))
+      if (hasOwn.call(src, k))
         dst[k] = src[k];
     }
   }
@@ -134,7 +134,7 @@ function mixin(def) {
 
       // Copy `$mixin` statics.
       for (k in obj) {
-        if (Object_hasOwnProperty.call(qcIgnoreMixinProperties, k))
+        if (hasOwn.call(qcIgnoreMixinProperties, k))
           continue;
         Mixin[k] = obj[k];
       }
@@ -147,7 +147,7 @@ function mixin(def) {
 
   // Initialize members.
   for (var k in def) {
-    if (Object_hasOwnProperty.call(qcNoExtensions, k))
+    if (hasOwn.call(qcNoExtensions, k))
       continue;
     $qcMembers[k] = def[k];
   }
@@ -242,7 +242,7 @@ function qclass(def) {
 
       // Include `$mixin` statics.
       for (k in obj) {
-        if (Object_hasOwnProperty.call(qcIgnoreMixinProperties, k))
+        if (hasOwn.call(qcIgnoreMixinProperties, k))
           continue;
         Class[k] = obj[k];
       }
@@ -281,7 +281,7 @@ function qclass(def) {
 
     // The value is merged to the prototype directly if the extension doesn't
     // override the key `k`.
-    if (e === undefined || !Object_hasOwnProperty.call($qcExtensions, k)) {
+    if (e === undefined || !hasOwn.call($qcExtensions, k)) {
       p[k] = v;
       continue;
     }
