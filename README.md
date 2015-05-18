@@ -13,7 +13,7 @@ QClass is a library designed to solve common problems that happen in JS inherita
 
 So how to create a JS Class? Just import `qclass` library (or include, if you work on client-side) and use `qclass` as a function to create your class. `qclass` function accepts only one argument of `Object` type that is used to define base class, members and static properties; it will return a new `Class` object that can be instantiated. A simple example is shown below:
 
-```JS
+```js
 // Create a new `Class` object that doesn't inherit from any object. It
 // inherits internally from a pure JavaScript `Object`, but in the end all
 // objects do. A `$construct` property defines `Class` constructor and other
@@ -31,7 +31,7 @@ var Class = qclass({
 
 The `$construct` property defines class constructor and other properties define class members. The `Class` can be instantiated simply by using `new` operator as demonstrated on the following example:
 
-```JS
+```js
 // Create an instance of `Class` defined in previous example.
 var instance = new Class();
 
@@ -50,7 +50,7 @@ Inheritance
 
 Inheritance is defined by using `$extend` property:
 
-```JS
+```js
 // `Point` is a base class.
 var Point = qclass({
   $construct: function(x, y) {
@@ -110,7 +110,7 @@ Statics
 
 QClass allows to define static members by using `$statics` property. 
 
-```JS
+```js
 var Class = qclass({
   $construct: function() {
     this.status = Class.Ready;
@@ -140,7 +140,7 @@ Extension is a function of name that is called if a property matching the name h
 
 Extensions can be used to provide additional features in your object oriented model. The example below illustrates how to use extensions to automatically generate getProperty() and setProperty() functions:
 
-```JS
+```js
 var Point = qclass({
   $construct: function(x, y) {
     this.x = x;
@@ -203,7 +203,7 @@ Extensions define a function that is called if a given `key` is present in class
 
 The following example does the same thing as `$properties` extension, but by using `$hooks`:
 
-```JS
+```js
 var Point = qclass({
   $construct: function(x, y) {
     this.x = x;
@@ -261,7 +261,7 @@ Mixins
 
 A mixin is set of functions that can be included in another class or mixin. Mixins are defined by using `qclass.mixin(def)`, where `def` is similar definition compatible to `qclass` itself, but without `$construct` support (mixins can't be instantiated). Mixins also understand `$extensions` and `$hooks`, so it's possible to define these in the mixin and just include in other classes.
 
-```JS
+```js
 // Create a mixin that provides `translate(x, y)` function.
 var MTranslate = qclass.mixin({
   translate: function(x, y) {
@@ -314,7 +314,7 @@ console.log(r.toString()); // Outputs `[1, 2, 33, 67]`.
 
 Combining more mixins to a single mixin:
 
-```JS
+```js
 // Create two mixins MTranslate and MScale.
 var MTranslate = qclass.mixin({
   translate: function(x, y) {
