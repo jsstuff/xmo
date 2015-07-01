@@ -1,6 +1,6 @@
 {
-  "name": "qclass",
-  "version": "0.1.2",
+  "name": "exclass",
+  "version": "1.0.0",
 
   "description": "Quick and simple JavaScript class library.",
   "keywords": [
@@ -15,9 +15,9 @@
     "property"
   ],
 
-  "homepage": "https://github.com/jshq/qclass",
+  "homepage": "https://github.com/exceptionaljs/exclass",
   "bugs": {
-    "url": "https://github.com/jshq/qclass/issues"
+    "url": "https://github.com/exceptionaljs/exclass/issues"
   },
 
   "contributors": [{
@@ -28,7 +28,7 @@
 
   "license": "Unlicense",
 
-  "main": "qclass.js",
+  "main": "exclass.js",
 
   "devDependencies": {
     "mocha": "*"
@@ -36,10 +36,10 @@
 
   "repository" : {
     "type": "git",
-    "url": "https://github.com/jshq/qclass.git"
+    "url": "https://github.com/exceptionaljs/exclass.git"
   },
 
   "scripts": {
-    "test": "mocha qclass-spec.js"
+    "test": "mocha exclass-spec.js"
   }
 }

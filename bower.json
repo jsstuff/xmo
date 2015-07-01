@@ -1,6 +1,6 @@
 {
-  "name": "qclass",
-  "version": "0.1.2",
-  "main": "qclass.js",
+  "name": "exclass",
+  "version": "1.0.0",
+  "main": "exclass.js",
   "dependencies": {}
 }

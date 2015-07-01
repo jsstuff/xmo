@@ -1,24 +1,24 @@
-QClass
-======
+exclass.js
+==========
 
 Lightweight, but powerful JavaScript inheritance and mixins.
 
-  * [Official Repository (jshq/qclass)](https://github.com/jshq/qclass)
-  * [Unlicense] (http://unlicense.org)
+  * [Official Repository (exceptionaljs/exclass)](https://github.com/exceptionaljs/exclass)
+  * [Public Domain (http://unlicense.org)](http://unlicense.org)
 
 Introduction
 ------------
 
-QClass is a library designed to solve common problems that happen in JS inheritance model. QClass helps to create and inherit a JavaScript `Class` and does some dirty job internally to make it possible. The library has been inspired in `Qooxdoo`s object oriented model, but the idea has been completely redesigned resulting in a much simpler code that allows third parties to write their own extensions. In addition, QClass never modifies a global scope.
+exclass.js is a library designed to solve common problems that happen in JS inheritance model. It helps with creating and inheriting JavaScript classes and does some dirty job internally to make it possible. The library has been inspired in `Qooxdoo`s object oriented model, but the idea has been completely redesigned, which resulted in a much simpler code that allows third parties to write their own extensions if needed. Additionally, exclass.js never modifies the global scope.
 
-So how to create a JS Class? Just import `qclass` library (or include, if you work on client-side) and use `qclass` as a function to create your class. `qclass` function accepts only one argument of `Object` type that is used to define base class, members and static properties; it will return a new `Class` object that can be instantiated. A simple example is shown below:
+So how to create a JavaScript Class? Just import `exclass` library (or include, if you work on client-side) and use `exclass` as a function to create your own class. `exclass` function accepts only one argument of `Object` type that is used to define a base class, class members, and class statics; it will return a new `Class` object that can be instantiated. A simple example is shown below:
 
 ```js
 // Create a new `Class` object that doesn't inherit from any object. It
 // inherits internally from a pure JavaScript `Object`, but in the end all
 // objects do. A `$construct` property defines `Class` constructor and other
 // properties define `Class` members (that will be put to `Class.prototype`).
-var Class = qclass({
+var Class = exclass({
   $construct: function() {
     this.text = "Hi!"
   },
@@ -52,7 +52,7 @@ Inheritance is defined by using `$extend` property:
 
 ```js
 // `Point` is a base class.
-var Point = qclass({
+var Point = exclass({
   $construct: function(x, y) {
     this.x = x;
     this.y = y;
@@ -71,7 +71,7 @@ var Point = qclass({
 });
 
 // `Circle` extends `Point`.
-var Circle = qclass({
+var Circle = exclass({
   $extend: Point,
 
   $construct: function(x, y, radius) {
@@ -108,10 +108,10 @@ console.log(circle instanceof Circle); // Outputs `true`.
 Statics
 -------
 
-QClass allows to define static members by using `$statics` property. 
+exclass.js allows to define static members by using `$statics` property. 
 
 ```js
-var Class = qclass({
+var Class = exclass({
   $construct: function() {
     this.status = Class.Ready;
   },
@@ -134,14 +134,14 @@ console.log(instance.Ready);  // Outputs `undefined`.
 Extensions
 ----------
 
-Many JS frameworks, especially client-side, provide a fixed set of extensions to the object model they use. For example Qooxdoo supports mixins, interfaces and allows to define properties and events. QClass doesn't have any of these to keep the design simple, but to make the library more usable a concept called `Extensions` has been implemented. 
+Many JS frameworks, especially client-side, provide a fixed set of extensions to the object model they use. For example Qooxdoo supports mixins, interfaces and allows to define properties and events. exclass.js doesn't have any of these to keep the design simple, but to make the library more usable a concept called `Extensions` has been introduced.
 
 Extension is a function of name that is called if a property matching the name has been used in class definition. Extensions are inherited with classes, thus a new class can provide also new extensions that will be applied to all descendants.
 
 Extensions can be used to provide additional features in your object oriented model. The example below illustrates how to use extensions to automatically generate getProperty() and setProperty() functions:
 
 ```js
-var Point = qclass({
+var Point = exclass({
   $construct: function(x, y) {
     this.x = x;
     this.y = y;
@@ -158,7 +158,7 @@ var Point = qclass({
     // `this` - Class object     (`Point` in our case).
     // `v`    - Property Value   ("x" or "y" in our case).
     // `k`    - Property Key     (`$properties` in our case).
-    // `def`  - The whole `def` object passed to `qclass(def)`.
+    // `def`  - The whole `def` object passed to `exclass(def)`.
     $properties: function(v, k, def) {
       // Iterate over all keys in `$properties`.
       Object.keys(v).forEach(function(key) {
@@ -199,12 +199,12 @@ console.log(point.getY()); // Outputs `20`.
 Hooks
 -----
 
-Extensions define a function that is called if a given `key` is present in class definition. Since this concept is fine and generally useful, sometimes it's handy to be able to call a function per class definition that doesn't rely on a particular key - this is called hooks in `qclass` and defined by `$hooks` property, which can contain a single function (Hook) or an array of functions. Hooks, like extensions, are inherited with the class, so if a hook is defined it's called for all classes that directly or indirectly inherit from the class where the Hook has been defined.
+Extensions define a function that is called if a given `key` is present in class definition. Since this concept is fine and generally useful, sometimes it's handy to be able to call a function per class definition that doesn't rely on a particular key - this is called hooks in `exclass` and defined by `$hooks` property, which can contain a single function (Hook) or an array of functions. Hooks, like extensions, are inherited with the class, so if a hook is defined it's called for all classes that directly or indirectly inherit from the class where the Hook has been defined.
 
 The following example does the same thing as `$properties` extension, but by using `$hooks`:
 
 ```js
-var Point = qclass({
+var Point = exclass({
   $construct: function(x, y) {
     this.x = x;
     this.y = y;
@@ -213,7 +213,7 @@ var Point = qclass({
   // Define a hook.
   //
   // `this` - Class object (`Point` in our case).
-  // `def`  - The whole `def` object passed to `qclass(def)`.
+  // `def`  - The whole `def` object passed to `exclass(def)`.
   $hooks: function(def) {
     if (!def.$properties)
       return;
@@ -254,16 +254,16 @@ console.log(point.getX()); // Outputs `10`.
 console.log(point.getY()); // Outputs `20`.
 ```
 
-Hooks are very similar to extensions, however they don't need any key in definitions and are always called. Hooks are in general more powerful, because they can use any property or multiple properties to do the job. For example in [QSql](https://github.com/jshq/qsql) library hooks are used to alias all "UPPER_CASED" functions which mimic SQL keywords to "camelCased" alternatives.
+Hooks are very similar to extensions, however they don't need any key in definitions and are always called. Hooks are in general more powerful, because they can use any property or multiple properties to do the job. For example in [uql.js](https://github.com/exceptionaljs/uql) library hooks are used to alias all "UPPER_CASED" functions which mimic SQL keywords to "camelCased" alternatives.
 
 Mixins
 ------
 
-A mixin is set of functions that can be included in another class or mixin. Mixins are defined by using `qclass.mixin(def)`, where `def` is similar definition compatible to `qclass` itself, but without `$construct` support (mixins can't be instantiated). Mixins also understand `$extensions` and `$hooks`, so it's possible to define these in the mixin and just include in other classes.
+A mixin is set of functions that can be included in another class or mixin. Mixins are defined by using `exclass.mixin(def)`, where `def` is similar definition compatible to `exclass` itself, but without `$construct` support (mixins can't be instantiated). Mixins also understand `$extensions` and `$hooks`, so it's possible to define these in the mixin and just include in other classes.
 
 ```js
 // Create a mixin that provides `translate(x, y)` function.
-var MTranslate = qclass.mixin({
+var MTranslate = exclass.mixin({
   translate: function(x, y) {
     this.x += x;
     this.y += y;
@@ -272,7 +272,7 @@ var MTranslate = qclass.mixin({
 });
 
 // Create a Point class that includes MTranslate mixin.
-var Point = qclass({
+var Point = exclass({
   $mixins: [MTranslate],
 
   $construct: function(x, y) {
@@ -286,7 +286,7 @@ var Point = qclass({
 });
 
 // Create a Rect class that includes MTranslate mixin.
-var Rect = qclass({
+var Rect = exclass({
   $mixins: [MTranslate],
 
   $construct: function(x, y, w, h) {
@@ -316,7 +316,7 @@ Combining more mixins to a single mixin:
 
 ```js
 // Create two mixins MTranslate and MScale.
-var MTranslate = qclass.mixin({
+var MTranslate = exclass.mixin({
   translate: function(x, y) {
     this.x += x;
     this.y += y;
@@ -324,7 +324,7 @@ var MTranslate = qclass.mixin({
   }
 });
 
-var MScale = qclass.mixin({
+var MScale = exclass.mixin({
   scale: function(x, y) {
     if (y == null)
       y = x;
@@ -337,7 +337,7 @@ var MScale = qclass.mixin({
 
 // If a combined mixin is needed, it can be created simply by
 // including MTranslate and MScale into another mixin.
-var MCombined = qclass.mixin({
+var MCombined = exclass.mixin({
   $mixins: [MTranslate, MScale]
 });
 ```

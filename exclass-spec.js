@@ -1,8 +1,8 @@
-// QClass <https://github.com/jshq/qclass>
-"use strict"
+// exclass.js <https://github.com/exceptionaljs/exclass>
+"use strict";
 
 var assert = require("assert");
-var qclass = require("./qclass");
+var exclass = require("./exclass");
 
 // Properties extension, used by multiple tests.
 var $def = null;
@@ -25,9 +25,9 @@ var $properties = function(v, k, def) {
   }, this);
 };
 
-describe("QClass", function() {
+describe("exclass", function() {
   it("should create new Class without `$construct` specified.", function() {
-    var Class = qclass($def = {});
+    var Class = exclass($def = {});
 
     var obj = new Class();
     assert(obj instanceof Object);
@@ -35,7 +35,7 @@ describe("QClass", function() {
   });
 
   it("should create new Class with `$construct` specified.", function() {
-    var Class = qclass($def = {
+    var Class = exclass($def = {
       $construct: function(property) {
         this.property = property;
       }
@@ -49,7 +49,7 @@ describe("QClass", function() {
   });
 
   it("should create new Class with members.", function() {
-    var Class = qclass($def = {
+    var Class = exclass($def = {
       $construct: function(a, b) {
         this.a = a;
         this.b = b;
@@ -68,7 +68,7 @@ describe("QClass", function() {
   });
 
   it("should create new Class with `$statics`.", function() {
-    var Class = qclass($def = {
+    var Class = exclass($def = {
       $statics: {
         Answer: 42
       }
@@ -82,13 +82,13 @@ describe("QClass", function() {
   });
 
   it("should inherit without `$construct` specified.", function() {
-    var ClassA = qclass($def = {
+    var ClassA = exclass($def = {
       getType: function() {
         return "ClassA";
       }
     });
 
-    var ClassB = qclass($def = {
+    var ClassB = exclass($def = {
       $extend: ClassA,
 
       getType: function() {
@@ -110,7 +110,7 @@ describe("QClass", function() {
   });
 
   it("should inherit with `$construct` specified.", function() {
-    var ClassA = qclass($def = {
+    var ClassA = exclass($def = {
       $construct: function(x) {
         this.x = x;
       },
@@ -120,7 +120,7 @@ describe("QClass", function() {
       }
     });
 
-    var ClassB = qclass($def = {
+    var ClassB = exclass($def = {
       $extend: ClassA,
 
       $construct: function(x, y) {
@@ -152,7 +152,7 @@ describe("QClass", function() {
   });
 
   it("should provide `$extensions`.", function() {
-    var Point = qclass($def = {
+    var Point = exclass($def = {
       $construct: function(x, y) {
         this.x = x;
         this.y = y;
@@ -168,7 +168,7 @@ describe("QClass", function() {
       }
     });
 
-    var Circle = qclass($def = {
+    var Circle = exclass($def = {
       $extend: Point,
 
       $construct: function(x, y, radius) {
@@ -208,7 +208,7 @@ describe("QClass", function() {
   });
 
   it("should provide `$hooks`.", function() {
-    var Point = qclass($def = {
+    var Point = exclass($def = {
       $construct: function(x, y) {
         this.x = x;
         this.y = y;
@@ -220,7 +220,7 @@ describe("QClass", function() {
       }
     });
 
-    var Circle = qclass($def = {
+    var Circle = exclass($def = {
       $extend: Point,
 
       $construct: function(x, y, radius) {
@@ -242,9 +242,9 @@ describe("QClass", function() {
   });
 });
 
-describe("QClass.Mixin", function() {
+describe("exclass.Mixin", function() {
   it("should create and use single mixin.", function() {
-    var MTranslate = qclass.mixin({
+    var MTranslate = exclass.mixin({
       translate: function(x, y) {
         this.x += x;
         this.y += y;
@@ -252,7 +252,7 @@ describe("QClass.Mixin", function() {
       }
     });
 
-    var Point = qclass($def = {
+    var Point = exclass($def = {
       $mixins: MTranslate,
 
       $construct: function(x, y) {
@@ -270,7 +270,7 @@ describe("QClass.Mixin", function() {
   });
 
   it("should create and use multiple mixins.", function() {
-    var MTranslate = qclass.mixin({
+    var MTranslate = exclass.mixin({
       translate: function(x, y) {
         this.x += x;
         this.y += y;
@@ -278,7 +278,7 @@ describe("QClass.Mixin", function() {
       }
     });
 
-    var MScale = qclass.mixin({
+    var MScale = exclass.mixin({
       scale: function(s) {
         this.x *= s;
         this.y *= s;
@@ -286,7 +286,7 @@ describe("QClass.Mixin", function() {
       }
     });
 
-    var Point = qclass($def = {
+    var Point = exclass($def = {
       $mixins: [MTranslate, MScale],
 
       $construct: function(x, y) {
@@ -310,7 +310,7 @@ describe("QClass.Mixin", function() {
   });
 
   it("should include mixin in mixin.", function() {
-    var MTranslate = qclass.mixin({
+    var MTranslate = exclass.mixin({
       translate: function(x, y) {
         this.x += x;
         this.y += y;
@@ -318,7 +318,7 @@ describe("QClass.Mixin", function() {
       }
     });
 
-    var MScale = qclass.mixin({
+    var MScale = exclass.mixin({
       scale: function(s) {
         this.x *= s;
         this.y *= s;
@@ -326,17 +326,17 @@ describe("QClass.Mixin", function() {
       }
     });
 
-    var MGeometry = qclass.mixin({
+    var MGeometry = exclass.mixin({
       $mixins: [MTranslate, MScale]
     });
 
-    // qclass.mixin tries to use the objects from super class, check if it
+    // exclass.mixin tries to use the objects from super class, check if it
     // didn't corrupt super mixins. If this fails there is something wrong
-    // in `qclass.mixin()` implementation.
-    assert(MGeometry.$qcMembers !== MTranslate.$qcMembers);
-    assert(MGeometry.$qcMembers !== MScale.$qcMembers);
+    // in `exclass.mixin()` implementation.
+    assert(MGeometry.$exMembers !== MTranslate.$exMembers);
+    assert(MGeometry.$exMembers !== MScale.$exMembers);
 
-    var Point = qclass($def = {
+    var Point = exclass($def = {
       $mixins: [MGeometry],
 
       $construct: function(x, y) {
@@ -359,17 +359,17 @@ describe("QClass.Mixin", function() {
   });
 
   it("should handle `$extensions`.", function() {
-    var MProperties = qclass.mixin({
+    var MProperties = exclass.mixin({
       $extensions: {
         $properties: $properties
       }
     });
 
-    var MInherited = qclass.mixin({
+    var MInherited = exclass.mixin({
       $mixins: [MProperties]
     });
 
-    var Point = qclass($def = {
+    var Point = exclass($def = {
       $mixins: [MInherited],
 
       $construct: function(x, y) {
