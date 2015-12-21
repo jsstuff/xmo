@@ -1,4 +1,4 @@
-// exclass.js <https://github.com/exceptionaljs/exclass>
+// exclass.js <https://github.com/exjs/exclass>
 "use strict";
 
 var assert = require("assert");

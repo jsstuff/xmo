@@ -1,4 +1,4 @@
-// exclass.js <https://github.com/exceptionaljs/exclass>
+// exclass.js <https://github.com/exjs/exclass>
 (function($export, $as) {
 "use strict";
 
@@ -305,7 +305,7 @@ function exclass(def) {
 // `exclass.VERSION`
 //
 // Version information in a "major.minor.patch" form.
-exclass.VERSION = "1.0.0";
+exclass.VERSION = "1.1.0";
 
 exclass.mixin = mixin;
 $export[$as] = exclass;

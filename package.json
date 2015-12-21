@@ -1,6 +1,6 @@
 {
   "name": "exclass",
-  "version": "1.0.0",
+  "version": "1.1.0",
 
   "description": "Quick and simple JavaScript class library.",
   "keywords": [
@@ -15,9 +15,9 @@
     "property"
   ],
 
-  "homepage": "https://github.com/exceptionaljs/exclass",
+  "homepage": "https://github.com/exjs/exclass",
   "bugs": {
-    "url": "https://github.com/exceptionaljs/exclass/issues"
+    "url": "https://github.com/exjs/exclass/issues"
   },
 
   "contributors": [{
@@ -36,7 +36,7 @@
 
   "repository" : {
     "type": "git",
-    "url": "https://github.com/exceptionaljs/exclass.git"
+    "url": "https://github.com/exjs/exclass.git"
   },
 
   "scripts": {

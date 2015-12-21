@@ -3,7 +3,7 @@ exclass.js
 
 Lightweight, but powerful JavaScript inheritance and mixins.
 
-  * [Official Repository (exceptionaljs/exclass)](https://github.com/exceptionaljs/exclass)
+  * [Official Repository (exjs/exclass)](https://github.com/exjs/exclass)
   * [Public Domain (http://unlicense.org)](http://unlicense.org)
 
 Introduction
@@ -254,7 +254,7 @@ console.log(point.getX()); // Outputs `10`.
 console.log(point.getY()); // Outputs `20`.
 ```
 
-Hooks are very similar to extensions, however they don't need any key in definitions and are always called. Hooks are in general more powerful, because they can use any property or multiple properties to do the job. For example in [uql.js](https://github.com/exceptionaljs/uql) library hooks are used to alias all "UPPER_CASED" functions which mimic SQL keywords to "camelCased" alternatives.
+Hooks are very similar to extensions, however they don't need any key in definitions and are always called. Hooks are in general more powerful, because they can use any property or multiple properties to do the job. For example in [uql.js](https://github.com/exjs/uql) library hooks are used to alias all "UPPER_CASED" functions which mimic SQL keywords to "camelCased" alternatives.
 
 Mixins
 ------
