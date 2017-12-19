@@ -1,17 +1,15 @@
-// exclass.js <https://github.com/exjs/exclass>
+// xmo.js <https://github.com/exjs/xmo>
 "use strict";
 
 var assert = require("assert");
-var exclass = require("./exclass");
+var xmo = require("./xmo");
 
 // Properties extension, used by multiple tests.
-var $def = null;
-var $properties = function(v, k, def) {
+var $properties = function(k, properties) {
   // Check if all the arguments provided are correct.
-  assert(k   === "$properties");
-  assert(def === $def);
+  assert(k === "$properties");
 
-  Object.keys(v).forEach(function(key) {
+  Object.keys(properties).forEach(function(key) {
     var upperKey = key.charAt(0).toUpperCase() + key.substr(1);
 
     // Create getter and setter for a given `key`.
@@ -25,18 +23,18 @@ var $properties = function(v, k, def) {
   }, this);
 };
 
-describe("exclass", function() {
-  it("should create new Class without `$construct` specified.", function() {
-    var Class = exclass($def = {});
+describe("xmo", function() {
+  it("should create new Class without `constructor` specified.", function() {
+    var Class = xmo({});
 
     var obj = new Class();
     assert(obj instanceof Object);
     assert(obj instanceof Class);
   });
 
-  it("should create new Class with `$construct` specified.", function() {
-    var Class = exclass($def = {
-      $construct: function(property) {
+  it("should create new Class with `constructor` specified.", function() {
+    var Class = xmo({
+      constructor: function(property) {
         this.property = property;
       }
     });
@@ -49,8 +47,8 @@ describe("exclass", function() {
   });
 
   it("should create new Class with members.", function() {
-    var Class = exclass($def = {
-      $construct: function(a, b) {
+    var Class = xmo({
+      constructor: function(a, b) {
         this.a = a;
         this.b = b;
       },
@@ -68,7 +66,7 @@ describe("exclass", function() {
   });
 
   it("should create new Class with `$statics`.", function() {
-    var Class = exclass($def = {
+    var Class = xmo({
       $statics: {
         Answer: 42
       }
@@ -81,14 +79,14 @@ describe("exclass", function() {
     assert(obj.Answer === undefined);
   });
 
-  it("should inherit without `$construct` specified.", function() {
-    var ClassA = exclass($def = {
+  it("should inherit without `constructor` specified.", function() {
+    var ClassA = xmo({
       getType: function() {
         return "ClassA";
       }
     });
 
-    var ClassB = exclass($def = {
+    var ClassB = xmo({
       $extend: ClassA,
 
       getType: function() {
@@ -109,9 +107,9 @@ describe("exclass", function() {
     assert(b.getType() === "ClassB");
   });
 
-  it("should inherit with `$construct` specified.", function() {
-    var ClassA = exclass($def = {
-      $construct: function(x) {
+  it("should inherit with `constructor` specified.", function() {
+    var ClassA = xmo({
+      constructor: function(x) {
         this.x = x;
       },
 
@@ -120,10 +118,10 @@ describe("exclass", function() {
       }
     });
 
-    var ClassB = exclass($def = {
+    var ClassB = xmo({
       $extend: ClassA,
 
-      $construct: function(x, y) {
+      constructor: function(x, y) {
         ClassA.call(this, x);
         this.y = y;
       },
@@ -152,8 +150,8 @@ describe("exclass", function() {
   });
 
   it("should provide `$extensions`.", function() {
-    var Point = exclass($def = {
-      $construct: function(x, y) {
+    var Point = xmo({
+      constructor: function(x, y) {
         this.x = x;
         this.y = y;
       },
@@ -168,10 +166,10 @@ describe("exclass", function() {
       }
     });
 
-    var Circle = exclass($def = {
+    var Circle = xmo({
       $extend: Point,
 
-      $construct: function(x, y, radius) {
+      constructor: function(x, y, radius) {
         Point.call(this, x, y);
         this.radius = radius;
       },
@@ -207,44 +205,56 @@ describe("exclass", function() {
     assert(circle.getRadius() === 30);
   });
 
-  it("should provide `$hooks`.", function() {
-    var Point = exclass($def = {
-      $construct: function(x, y) {
+  it("should provide `$preInit` and `$postInit`.", function() {
+    var Point = xmo({
+      constructor: function(x, y) {
         this.x = x;
         this.y = y;
       },
 
-      $hooks: function(def) {
-        assert(def === $def);
-        this.PointHook = true;
+      $preInit: function(def) {
+        this.PointPreInit = true;
+        assert(this.PointPostInit === undefined);
+      },
+
+      $postInit: function(def) {
+        this.PointPostInit = true;
       }
     });
 
-    var Circle = exclass($def = {
+    var Circle = xmo({
       $extend: Point,
 
-      $construct: function(x, y, radius) {
+      constructor: function(x, y, radius) {
         Point.call(this, x, y);
         this.radius = radius;
       },
 
-      $hooks: function(def) {
-        assert(def === $def);
-        this.CircleHook = true;
+      $preInit: function(def) {
+        this.CirclePreInit = true;
+        assert(this.CirclePostInit === undefined);
+      },
+
+      $postInit: function(def) {
+        this.CirclePostInit = true;
       }
     });
 
-    assert(Point.PointHook === true);
-    assert(!Point.hasOwnProperty("CircleHook"));
+    assert(Point.PointPreInit === true);
+    assert(Point.PointPostInit === true);
+    assert(Point.CirclePreInit === undefined);
+    assert(Point.CirclePostInit === undefined);
 
-    assert(Circle.PointHook === true);
-    assert(Circle.CircleHook === true);
+    assert(Circle.PointPreInit === true);
+    assert(Circle.PointPostInit === true);
+    assert(Circle.CirclePreInit === true);
+    assert(Circle.CirclePostInit === true);
   });
 });
 
-describe("exclass.Mixin", function() {
+describe("xmo.Mixin", function() {
   it("should create and use single mixin.", function() {
-    var MTranslate = exclass.mixin({
+    var MTranslate = xmo.mixin({
       translate: function(x, y) {
         this.x += x;
         this.y += y;
@@ -252,10 +262,10 @@ describe("exclass.Mixin", function() {
       }
     });
 
-    var Point = exclass($def = {
+    var Point = xmo({
       $mixins: MTranslate,
 
-      $construct: function(x, y) {
+      constructor: function(x, y) {
         this.x = x;
         this.y = y;
       }
@@ -270,7 +280,7 @@ describe("exclass.Mixin", function() {
   });
 
   it("should create and use multiple mixins.", function() {
-    var MTranslate = exclass.mixin({
+    var MTranslate = xmo.mixin({
       translate: function(x, y) {
         this.x += x;
         this.y += y;
@@ -278,7 +288,7 @@ describe("exclass.Mixin", function() {
       }
     });
 
-    var MScale = exclass.mixin({
+    var MScale = xmo.mixin({
       scale: function(s) {
         this.x *= s;
         this.y *= s;
@@ -286,10 +296,10 @@ describe("exclass.Mixin", function() {
       }
     });
 
-    var Point = exclass($def = {
+    var Point = xmo({
       $mixins: [MTranslate, MScale],
 
-      $construct: function(x, y) {
+      constructor: function(x, y) {
         this.x = x;
         this.y = y;
       }
@@ -310,7 +320,7 @@ describe("exclass.Mixin", function() {
   });
 
   it("should include mixin in mixin.", function() {
-    var MTranslate = exclass.mixin({
+    var MTranslate = xmo.mixin({
       translate: function(x, y) {
         this.x += x;
         this.y += y;
@@ -318,7 +328,7 @@ describe("exclass.Mixin", function() {
       }
     });
 
-    var MScale = exclass.mixin({
+    var MScale = xmo.mixin({
       scale: function(s) {
         this.x *= s;
         this.y *= s;
@@ -326,20 +336,14 @@ describe("exclass.Mixin", function() {
       }
     });
 
-    var MGeometry = exclass.mixin({
+    var MGeometry = xmo.mixin({
       $mixins: [MTranslate, MScale]
     });
 
-    // exclass.mixin tries to use the objects from super class, check if it
-    // didn't corrupt super mixins. If this fails there is something wrong
-    // in `exclass.mixin()` implementation.
-    assert(MGeometry.$exMembers !== MTranslate.$exMembers);
-    assert(MGeometry.$exMembers !== MScale.$exMembers);
-
-    var Point = exclass($def = {
+    var Point = xmo({
       $mixins: [MGeometry],
 
-      $construct: function(x, y) {
+      constructor: function(x, y) {
         this.x = x;
         this.y = y;
       }
@@ -359,20 +363,20 @@ describe("exclass.Mixin", function() {
   });
 
   it("should handle `$extensions`.", function() {
-    var MProperties = exclass.mixin({
+    var MProperties = xmo.mixin({
       $extensions: {
         $properties: $properties
       }
     });
 
-    var MInherited = exclass.mixin({
+    var MInherited = xmo.mixin({
       $mixins: [MProperties]
     });
 
-    var Point = exclass($def = {
+    var Point = xmo({
       $mixins: [MInherited],
 
-      $construct: function(x, y) {
+      constructor: function(x, y) {
         this.x = x;
         this.y = y;
       },

@@ -1,45 +1,49 @@
-exclass.js
-==========
+xmo.js
+======
 
-Lightweight, but powerful JavaScript inheritance and mixins.
+Extensible Meta Objects (xmo.js) is a lightweight class library for creating JS classes and mixins.
 
-  * [Official Repository (exjs/exclass)](https://github.com/exjs/exclass)
-  * [Public Domain (http://unlicense.org)](http://unlicense.org)
+  * [Official Repository (exjs/xmo)](https://github.com/exjs/xmo)
+  * [Official Chat (gitter)](https://gitter.im/exjs/exjs)
+  * [Public Domain (https://unlicense.org)](https://unlicense.org)
 
 Introduction
 ------------
 
-exclass.js is a library designed to solve common problems that happen in JS inheritance model. It helps with creating and inheriting JavaScript classes and does some dirty job internally to make it possible. The library has been inspired in `Qooxdoo`s object oriented model, but the idea has been completely redesigned, which resulted in a much simpler code that allows third parties to write their own extensions if needed. Additionally, exclass.js never modifies the global scope.
+`xmo.js` is a lightweight javascript library for creating JS classes and mixins. Unlike many other libraries that try to solve the same problem `xmo.js` was designed to be extensible and only provides the mechanism to create a new class or mixin with a possibility to register user-defined extensions and init handlers.
 
-So how to create a JavaScript Class? Just import `exclass` library (or include, if you work on client-side) and use `exclass` as a function to create your own class. `exclass` function accepts only one argument of `Object` type that is used to define a base class, class members, and class statics; it will return a new `Class` object that can be instantiated. A simple example is shown below:
+There are many UI toolkits and JS frameworks that provide some kind of class subsystem that adds properties, events, and other features to the traditional javascript class. This approach makes the class-subsystem dependent on the framework and makes it unusable outside of it.
+
+The approach used by `xmo.js` is different. It allows to register init handlers and extensions to the class itself so any class that inherits it would provide the same features as the base class. This means that many existing class frameworks could be theoretically implemented on top of `xmo.js` itself.
+
+So how to create a JavaScript Class? Just import `xmo` library (or include it if you work on client-side) and use `xmo` as a function to create your own class. The function accepts only one argument `def`, which is used to define members, static properties, init handlers, and extensions; it will return a new `Class` object that can be instantiated by a `new` keyword. A simple example is shown below:
 
 ```js
-// Create a new `Class` object that doesn't inherit from any object. It
-// inherits internally from a pure JavaScript `Object`, but in the end all
-// objects do. A `$construct` property defines `Class` constructor and other
-// properties define `Class` members (that will be put to `Class.prototype`).
-var Class = exclass({
-  $construct: function() {
+// Create a new class `Class` that doesn't inherit from any object. It
+// inherits internally from a pure JavaScript `Object`, which most JS objects
+// do. A `constructor` property defines the constructor and other properties
+// define class members (that will be added to the prototype object).
+const Class = xmo({
+  constructor() {
     this.text = "Hi!"
   },
 
-  toString: function() {
+  toString() {
     return this.text;
   }
 });
 ```
 
-The `$construct` property defines class constructor and other properties define class members. The `Class` can be instantiated simply by using `new` operator as demonstrated on the following example:
+The `constructor` property defines class constructor and other properties define class members. The `Class` can be instantiated simply by using `new` operator as demonstrated in the following example:
 
 ```js
 // Create an instance of `Class` defined in previous example.
-var instance = new Class();
+const instance = new Class();
 
 // `instance` is now an instance of `Class`, we can check if the inheritance
 // is working as expected by calling `toString` method, which should return
 // "Hi!". Another expected behavior is using `instanceof` keyword which should
 // return `true` if tested against `Class`.
-
 console.log(instance.toString());        // Outputs `Hi!`.
 console.log(instance instanceof Class);  // Outputs `true`.
 console.log(instance instanceof Object); // Outputs `true`.
@@ -48,53 +52,48 @@ console.log(instance instanceof Object); // Outputs `true`.
 Inheritance
 -----------
 
-Inheritance is defined by using `$extend` property:
+Base class can be specified by `$extend` property:
 
 ```js
 // `Point` is a base class.
-var Point = exclass({
-  $construct: function(x, y) {
+const Point = xmo({
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   },
 
-  translate: function(x, y) {
+  translate(x, y) {
     this.x += x;
     this.y += y;
   },
-  
-  toString: function() {
-    return "Point(" +
-      "{ x: " + this.x +
-      ", y: " + this.y + " })";
+
+  toString() {
+    return `Point { x: ${this.x}, y: ${this.y}}`;
   }
 });
 
 // `Circle` extends `Point`.
-var Circle = exclass({
+const Circle = xmo({
   $extend: Point,
 
-  $construct: function(x, y, radius) {
+  constructor(x, y, radius) {
     // Has to call superclass constructor.
     Point.call(this, x, y);
     this.radius = radius;
   },
 
   // Overrides `toString` of `Point`.
-  toString: function() {
-    return "Circle(" +
-      "{ x: " + this.x +
-      ", y: " + this.y +
-      ", radius: " + this.radius + " })";
+  toString() {
+    return `Circle { x: ${this.x}, y: ${this.y}, radius: ${this.radius} }`
   }
 });
 
 // Create instances of `Point` and `Circle` classes.
-var point = new Point(1, 1);
-var circle = new Circle(10, 10, 5);
+const point = new Point(1, 1);
+const circle = new Circle(10, 10, 5);
 
-console.log(point.toString());         // Outputs `Point({ x: 1, y: 1 })`.
-console.log(circle.toString());        // Outputs `Circle({ x: 10, y: 10, radius: 5 })`.
+console.log(point.toString());         // Outputs `Point { x: 1, y: 1 }`.
+console.log(circle.toString());        // Outputs `Circle { x: 10, y: 10, radius: 5 }`.
 
 // `point` is an instance of `Point`, but not `Circle`.
 console.log(point instanceof Point);   // Outputs `true`.
@@ -105,14 +104,14 @@ console.log(circle instanceof Point);  // Outputs `true`.
 console.log(circle instanceof Circle); // Outputs `true`.
 ```
 
-Statics
--------
+Static Properties
+-----------------
 
-exclass.js allows to define static members by using `$statics` property. 
+Static (Class) members can be defined by `$statics` property.
 
 ```js
-var Class = exclass({
-  $construct: function() {
+const Class = xmo({
+  constructor() {
     this.status = Class.Ready;
   },
 
@@ -125,29 +124,38 @@ var Class = exclass({
 console.log(Class.Ready);     // Outputs `0`.
 console.log(Class.Running);   // Outputs `1`.
 
-var instance = new Class();
+const instance = new Class();
 
 console.log(instance.status); // Outputs `0`.
-console.log(instance.Ready);  // Outputs `undefined`.
+console.log(instance.Ready);  // Outputs `undefined` (not a member of `instance`).
 ```
 
 Extensions
 ----------
 
-Many JS frameworks, especially client-side, provide a fixed set of extensions to the object model they use. For example Qooxdoo supports mixins, interfaces and allows to define properties and events. exclass.js doesn't have any of these to keep the design simple, but to make the library more usable a concept called `Extensions` has been introduced.
+Many JS frameworks, especially those designed for UI tookits, provide a fixed set of extensions to the object model they use. For example Qooxdoo supports mixins, interfaces, and allows to define properties and events. The purpose of `xmo.js` is not to provide all imaginable features, but to provide a foundation to add extensions to a particular class that will be then included by all classes that inherit it. This allows to extend the class-system at runtime and to support virtually anything user needs.
 
-Extension is a function of name that is called if a property matching the name has been used in class definition. Extensions are inherited with classes, thus a new class can provide also new extensions that will be applied to all descendants.
+There are at the moment 2 concepts supported by `xmo.js`:
 
-Extensions can be used to provide additional features in your object oriented model. The example below illustrates how to use extensions to automatically generate getProperty() and setProperty() functions:
+  1. Init handlers defined by `$preInit` and `$postInit` properties.
+  2. Extensions defined by `$extensions` property.
+
+A new class is always created by the following steps:
+
+  1. Inherit init handlers and extensions.
+  2. Call `$preInit` handlers.
+  3. Add new members to the class (handles all defined `$extensions` as well)
+  4. Call `$postInit` handlers.
+
+The following example uses `$extensions` property to define a `$property` extension:
 
 ```js
-var Point = exclass({
-  $construct: function(x, y) {
+const Point = xmo({
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   },
 
-  // Defines extensions.
   $extensions: {
     // Define extension `$properties`.
     //
@@ -156,22 +164,16 @@ var Point = exclass({
     // also called if `Point` itself uses `$properties` extension.
     //
     // `this` - Class object     (`Point` in our case).
-    // `v`    - Property Value   ("x" or "y" in our case).
-    // `k`    - Property Key     (`$properties` in our case).
-    // `def`  - The whole `def` object passed to `exclass(def)`.
-    $properties: function(v, k, def) {
+    // `k`    - Property key     ("$properties" string).
+    // `v`    - Property value   (`$properties` content).
+    $properties(k, v) {
       // Iterate over all keys in `$properties`.
-      Object.keys(v).forEach(function(key) {
-        var upperKey = key.charAt(0).toUpperCase() + key.substr(1);
+      Object.keys(v).forEach(function(name) {
+        const upper = name.charAt(0).toUpperCase() + name.substr(1);
 
-        // Create getter and setter for a given `key`.
-        this.prototype["get" + upperKey] = function() {
-          return this[key];
-        };
-
-        this.prototype["set" + upperKey] = function(value) {
-          this[key] = value;
-        };
+        // Create getter and setter for a given `name`.
+        this.prototype[`get${upper}`] = function() { return this[name]; };
+        this.prototype[`set${upper}`] = function(value) { this[name] = value; };
       }, this /* binds `this` to the callback. */);
     }
   },
@@ -183,8 +185,8 @@ var Point = exclass({
   }
 });
 
-// Create an instance of `Point` and try.
-var point = new Point(1, 2);
+// Create an instance of `Point` and call the generated functions.
+const point = new Point(1, 2);
 
 console.log(point.getX()); // Outputs `1`.
 console.log(point.getY()); // Outputs `2`.
@@ -196,41 +198,47 @@ console.log(point.getX()); // Outputs `10`.
 console.log(point.getY()); // Outputs `20`.
 ```
 
-Hooks
------
+PreInit & PostInit Handlers
+---------------------------
 
-Extensions define a function that is called if a given `key` is present in class definition. Since this concept is fine and generally useful, sometimes it's handy to be able to call a function per class definition that doesn't rely on a particular key - this is called hooks in `exclass` and defined by `$hooks` property, which can contain a single function (Hook) or an array of functions. Hooks, like extensions, are inherited with the class, so if a hook is defined it's called for all classes that directly or indirectly inherit from the class where the Hook has been defined.
+Extensions define a function that is called if a given `key` is present in class definition. Since this concept is fine and generally useful, sometimes it's handy to be able to call a handler before and/or after the class setup regardless of which properties are present in class definitions `def` object. Both `$preInit` and `$postInit` handlers are supported and can be used to add a single or multiple handlers at once.
 
-The following example does the same thing as `$properties` extension, but by using `$hooks`:
+The following example does the same thing as `$properties` extension, but uses using `$postInit` handler instead:
 
 ```js
-var Point = exclass({
-  $construct: function(x, y) {
+const Point = xmo({
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   },
 
-  // Define a hook.
+  // Add a preInit handler.
+  $preInit(def) {
+    // Does nothing here, just to document the syntax.
+  },
+
+  // Add a postInit handler, called once on Point and all classes that inherit it.
   //
   // `this` - Class object (`Point` in our case).
-  // `def`  - The whole `def` object passed to `exclass(def)`.
-  $hooks: function(def) {
+  // `def`  - The whole `def` object passed to `xmo(...)`.
+  $postInit(def) {
     if (!def.$properties)
       return;
 
     // Iterate over all keys in `$properties`.
-    Object.keys(def.$properties).forEach(function(key) {
-      var upperKey = key.charAt(0).toUpperCase() + key.substr(1);
+    Object.keys(def.$properties).forEach(function(name) {
+      const upper = name.charAt(0).toUpperCase() + name.substr(1);
 
       // Create getter and setter for a given `key`.
-      this.prototype["get" + upperKey] = function() {
-        return this[key];
-      };
-
-      this.prototype["set" + upperKey] = function(value) {
-        this[key] = value;
-      };
+      this.prototype[`get${upper}`] = function() { return this[name]; };
+      this.prototype[`set${upper}`] = function(value) { this[name] = value; };
     }, this /* binds `this` to the callback. */);
+  },
+
+  // This is not necessary. Null extensions are only used to make
+  // a certain property ignored (won't be copied to the prototype).
+  $extensions: {
+    $properties: null
   },
 
   // Will be used by the hook defined above.
@@ -242,7 +250,7 @@ var Point = exclass({
 
 // Create an instance of `Point` and use functions created by the
 // `property` extension.
-var point = new Point(1, 2);
+const point = new Point(1, 2);
 
 console.log(point.getX()); // Outputs `1`.
 console.log(point.getY()); // Outputs `2`.
@@ -254,17 +262,17 @@ console.log(point.getX()); // Outputs `10`.
 console.log(point.getY()); // Outputs `20`.
 ```
 
-Hooks are very similar to extensions, however they don't need any key in definitions and are always called. Hooks are in general more powerful, because they can use any property or multiple properties to do the job. For example in [uql.js](https://github.com/exjs/uql) library hooks are used to alias all "UPPER_CASED" functions which mimic SQL keywords to "camelCased" alternatives.
+Init handlers are very similar to extensions, however, they don't need any properties to be defined and are always called once per class. Init handlers are in general more powerful, because they can use any property or multiple properties to do add stuff to the class itself.
 
 Mixins
 ------
 
-A mixin is set of functions that can be included in another class or mixin. Mixins are defined by using `exclass.mixin(def)`, where `def` is similar definition compatible to `exclass` itself, but without `$construct` support (mixins can't be instantiated). Mixins also understand `$extensions` and `$hooks`, so it's possible to define these in the mixin and just include in other classes.
+A mixin is set of functions that can be included in another class or mixin. Mixins are defined by using `xmo.mixin(def)`, where `def` is similar definition compatible to `xmo.js` itself, but without `constructor` support (mixins can't be instantiated). Mixins also understand `$extensions` and `$preinit/$postInit` handlers, so it's possible to define these in mixin that is then included in other classes.
 
 ```js
 // Create a mixin that provides `translate(x, y)` function.
-var MTranslate = exclass.mixin({
-  translate: function(x, y) {
+const MTranslate = xmo.mixin({
+  translate(x, y) {
     this.x += x;
     this.y += y;
     return this;
@@ -272,38 +280,38 @@ var MTranslate = exclass.mixin({
 });
 
 // Create a Point class that includes MTranslate mixin.
-var Point = exclass({
+const Point = xmo({
   $mixins: [MTranslate],
 
-  $construct: function(x, y) {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   },
 
-  toString: function() {
-    return "[" + this.x + " " + this.y + "]";
+  toString() {
+    return `[${this.x}, ${this.y}]`;
   }
 });
 
 // Create a Rect class that includes MTranslate mixin.
-var Rect = exclass({
+const Rect = xmo({
   $mixins: [MTranslate],
 
-  $construct: function(x, y, w, h) {
+  constructor(x, y, w, h) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
   },
 
-  toString: function() {
-    return "[" + this.x + " " + this.y + " " + this.w + " " + this.h + "]";
+  toString() {
+    return `[${this.x}, ${this.y}, ${this.w}, ${this.h}]`;
   }
 });
 
 // The translate() functions are provided to both classes.
-var p = new Point(0, 0);
-var r = new Rect(0, 0, 33, 67);
+const p = new Point(0, 0);
+const r = new Rect(0, 0, 33, 67);
 
 p.translate(1, 2);
 r.translate(1, 2);
@@ -316,16 +324,16 @@ Combining more mixins to a single mixin:
 
 ```js
 // Create two mixins MTranslate and MScale.
-var MTranslate = exclass.mixin({
-  translate: function(x, y) {
+const MTranslate = xmo.mixin({
+  translate(x, y) {
     this.x += x;
     this.y += y;
     return this;
   }
 });
 
-var MScale = exclass.mixin({
-  scale: function(x, y) {
+const MScale = xmo.mixin({
+  scale(x, y) {
     if (y == null)
       y = x;
 
@@ -337,7 +345,138 @@ var MScale = exclass.mixin({
 
 // If a combined mixin is needed, it can be created simply by
 // including MTranslate and MScale into another mixin.
-var MCombined = exclass.mixin({
+const MCombined = xmo.mixin({
   $mixins: [MTranslate, MScale]
 });
 ```
+
+Meta Information
+----------------
+
+Each class created by `xmo.js` contains a non-enumerable property called MetaInfo. It contains essential information about the class itself (and inheritance) and can be used to store additional information required by extensions.
+
+Let's demonstrate the basics of MetaInfo:
+
+```js
+const Class = xmo({
+  $preInit() {
+    console.log("PreInit()");
+  },
+
+  $postInit() {
+    console.log("PostInit()");
+  },
+
+  $extensions: {
+    $ignoredField: null,
+
+    $customField(k, v) {
+      console.log(`CustomField(): '${k}' with data ${JSON.stringify(v)}`);
+    }
+  },
+
+  $customField: {
+    test: []
+  },
+
+  $statics: {
+    SomeConst: 0
+  }
+});
+
+// Firstly, try to instantiate the class:
+//   PreInit()
+//   CustomField(): '$customField' with data { test: [] }
+//   PostInit()
+const instance = new Class();
+
+// Access MetaInfo of the class.
+//   (Alternatively `instance.constructor.$metaInfo`)
+const MetaInfo = Class.$metaInfo;
+
+// Boolean value indicating a mixin:
+//   false
+console.log(MetaInfo.isMixin);
+
+// Super class:
+//   null (would link to super class if the class was inherited)
+console.log(MetaInfo.super);
+
+// Map of ignored properties:
+//   { $ignoredField: true, $customField: true }
+console.log(MetaInfo.ignored);
+
+// Map of all static properties:
+//   { SomeConst: true }
+console.log(MetaInfo.statics);
+
+// PreInit handlers:
+//   [function(...)]
+console.log(MetaInfo.preInit);
+
+// PostInit handlers:
+//   [function(...)]
+console.log(MetaInfo.postInit);
+
+// Extensions:
+//   { $customField: function(...) }
+console.log(MetaInfo.extensions);
+
+//
+```
+
+It's important to mention that all members of MetaClass are frozen (immutable) and cannot be modified after the class was created (after all postInit handlers were called). MetaInfo can only be changed during class creation by init handlers and class extensions. Use `getMutable()` member function to make a property of MetaInfo temporarily mutable.
+
+The following example shows how to add a custom reflection information to the MetaInfo:
+
+```js
+// Creates some base class that defines a property system.
+const Base = xmo({
+  $preInit() {
+    const meta = this.$metaInfo;
+
+    // Add `properties` property to MetaInfo object.
+    if (!meta.properties)
+      meta.properties = Object.create(null);
+  },
+
+  $extensions: {
+    $properties(k, v) {
+      const defProperties = v;
+      const metaProperties = this.$metaInfo.getMutable("properties");
+
+      // Simplest way, production code should deal with redefinitions, etc...
+      Object.assign(metaProperties, defProperties);
+    }
+  }
+});
+
+// Create two classes that add uses the extension we just created.
+const Point2D = xmo({
+  $extend: Base,
+  $properties: {
+    x: { type: "number" },
+    y: { type: "number" }
+  }
+});
+
+const Point3D = xmo({
+  $extend: Point2D,
+  $properties: {
+    z: { type: "number" }
+  }
+});
+
+// Access the MetaInfo of Point2D:
+//   { x: { type: "number" }
+//     y: { type: "number" } }
+console.log(JSON.stringify(Point2D.$metaInfo.properties));
+
+// Access the MetaInfo of Point3D:
+//   { x: { type: "number" },
+//     y: { type: "number" },
+//     z: { type: "number" } }
+console.log(JSON.stringify(Point3D.$metaInfo.properties));
+```
+
+NOTE: Alternatively a Mixin can be used instead of Base class.

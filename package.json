@@ -1,8 +1,8 @@
 {
-  "name": "exclass",
-  "version": "1.1.0",
+  "name": "xmo",
+  "version": "1.0.0",
 
-  "description": "Quick and simple JavaScript class library.",
+  "description": "Extensible Meta Objects (xmo.js) is a lightweight class library.",
   "keywords": [
     "class",
     "derive",
@@ -15,10 +15,8 @@
     "property"
   ],
 
-  "homepage": "https://github.com/exjs/exclass",
-  "bugs": {
-    "url": "https://github.com/exjs/exclass/issues"
-  },
+  "homepage": "https://github.com/exjs/xmo",
+  "bugs": { "url": "https://github.com/exjs/xmo/issues" },
 
   "contributors": [{
     "name": "Petr Kobalicek",
@@ -28,7 +26,7 @@
 
   "license": "Unlicense",
 
-  "main": "exclass.js",
+  "main": "xmo.js",
 
   "devDependencies": {
     "mocha": "*"
@@ -36,10 +34,10 @@
 
   "repository" : {
     "type": "git",
-    "url": "https://github.com/exjs/exclass.git"
+    "url": "https://github.com/exjs/xmo.git"
   },
 
   "scripts": {
-    "test": "mocha exclass-spec.js"
+    "test": "mocha xmo-spec.js"
   }
 }
