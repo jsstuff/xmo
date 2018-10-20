@@ -3,8 +3,7 @@ xmo.js
 
 Extensible Meta Objects (xmo.js) is a lightweight class library for creating JS classes and mixins.
 
-  * [Official Repository (exjs/xmo)](https://github.com/exjs/xmo)
-  * [Official Chat (gitter)](https://gitter.im/exjs/exjs)
+  * [Official Repository (jsstuff/xmo)](https://github.com/jsstuff/xmo)
   * [Public Domain (https://unlicense.org)](https://unlicense.org)
 
 Introduction

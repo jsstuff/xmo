@@ -1,4 +1,4 @@
-// xmo.js <https://github.com/exjs/xmo>
+// xmo.js <https://github.com/jsstuff/xmo>
 (function($export, $as) {
 "use strict";
 
@@ -18,7 +18,7 @@ function isFunctionArray(x) { return isArray(x) && x.every(isFunction); }
 
 function asArray(x) { return isArray(x) ? x : [x]; }
 
-function TYPE_ERROR(msg) { throw TypeError(msg); }
+function throwTypeError(msg) { throw TypeError(msg); }
 
 function isEmpty(obj) {
   for (var k in obj)
@@ -57,7 +57,7 @@ function newConstructor(Super) {
 function MetaInfo$getMutable(name) {
   var member = this[name];
   if (!member)
-    TYPE_ERROR(`No such member '${dstName} in Class.$metaInfo`);
+    throwTypeError(`No such member '${dstName} in Class.$metaInfo`);
 
   if (isFrozen(member))
     member = this[name] = clone(member);
@@ -75,7 +75,7 @@ function MetaInfo$freeze(metaInfo) {
 
 function MetaInfo$addInitHandlers(metaInfo, handlers, handlerType) {
   if (!isFunction(handlers) && !isFunctionArray(handlers))
-    TYPE_ERROR(`$${handlerType} must be Function or Function[], not '${typeof handlers}'`);
+    throwTypeError(`$${handlerType} must be Function or Function[], not '${typeof handlers}'`);
 
   const arr = asArray(handlers);
   for (var i = 0; i < arr.length; i++) {
@@ -88,7 +88,7 @@ function MetaInfo$addInitHandlers(metaInfo, handlers, handlerType) {
 
 function MetaInfo$addExtensions(metaInfo, extensions) {
   if (typeof extensions !== "object")
-    TYPE_ERROR(`$extensions must be Object, not '${typeof extensions}'`);
+    throwTypeError(`$extensions must be Object, not '${typeof extensions}'`);
 
   const ignoredMap = metaInfo.getMutable("ignored");
   const extensionsMap = metaInfo.getMutable("extensions");
@@ -206,7 +206,7 @@ function xmo_(def, isMixin) {
   const metaInfo = dict(Super !== Object ? Super.$metaInfo : (isMixin ? MixinMetaInfo : ClassMetaInfo));
 
   if (metaInfo.isMixin !== isMixin)
-    TYPE_ERROR(`Class/Mixin mismatch: Class.$metaInfo.isMixin(${metaInfo.isMixin}) != ${isMixin}`);
+    throwTypeError(`Class/Mixin mismatch: Class.$metaInfo.isMixin(${metaInfo.isMixin}) != ${isMixin}`);
 
   metaInfo.super = (Super !== Object) ? Super : null;
   Class.$metaInfo = metaInfo;

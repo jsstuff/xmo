@@ -1,4 +1,4 @@
-// xmo.js <https://github.com/exjs/xmo>
+// xmo.js <https://github.com/jsstuff/xmo>
 "use strict";
 
 var assert = require("assert");
